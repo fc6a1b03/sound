@@ -1,4 +1,4 @@
-FROM caddy:builder-alpine
+FROM caddy:alpine
 WORKDIR /usr/share/caddy
 COPY index.html index.js index.css ./
 COPY Caddyfile /etc/caddy/Caddyfile
