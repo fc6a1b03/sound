@@ -1,6 +1,6 @@
 let currentSong = null;
-let selectedQuality = null;
 let selectedMID = null;
+let selectedQuality = null;
 
 function handleKeyPress(event) {
     if (event.key === 'Enter') {
@@ -19,17 +19,14 @@ function closeSettingsModal() {
 function saveSettings() {
     const defaultPlayQuality = document.getElementById('default-play-quality').value;
     const defaultDownloadQuality = document.getElementById('default-download-quality').value;
-
     localStorage.setItem('defaultPlayQuality', defaultPlayQuality);
     localStorage.setItem('defaultDownloadQuality', defaultDownloadQuality);
-
     closeSettingsModal();
 }
 
 function loadSettings() {
     const defaultPlayQuality = localStorage.getItem('defaultPlayQuality') || '4';
     const defaultDownloadQuality = localStorage.getItem('defaultDownloadQuality') || '4';
-
     document.getElementById('default-play-quality').value = defaultPlayQuality;
     document.getElementById('default-download-quality').value = defaultDownloadQuality;
 }
@@ -38,7 +35,6 @@ function openDownloadModal(mid) {
     selectedMID = mid;
     document.getElementById('custom-quality').value = ''
     document.getElementById('download-modal').style.display = 'block';
-
     // 默认选中设置的默认下载音质
     const defaultDownloadQuality = document.getElementById('default-download-quality').value;
     const qualityRadios = document.querySelectorAll('input[name="download-quality"]');
@@ -47,7 +43,6 @@ function openDownloadModal(mid) {
             radio.checked = true;
         }
     });
-
     // 绑定事件监听器
     qualityRadios.forEach(radio => {
         radio.addEventListener('change', () => {
@@ -56,12 +51,7 @@ function openDownloadModal(mid) {
             }
         });
     });
-
-    document.getElementById('custom-quality').addEventListener('input', () => {
-        qualityRadios.forEach(radio => {
-            radio.checked = false;
-        });
-    });
+    document.getElementById('custom-quality').addEventListener('input', () => qualityRadios.forEach(radio => radio.checked = false));
 }
 
 function closeDownloadModal() {
@@ -69,8 +59,8 @@ function closeDownloadModal() {
 }
 
 function downloadSelectedQuality() {
-    const qualityRadios = document.querySelectorAll('input[name="download-quality"]');
     let quality = null;
+    const qualityRadios = document.querySelectorAll('input[name="download-quality"]');
     for (const radio of qualityRadios) {
         if (radio.checked) {
             quality = radio.value;
@@ -90,18 +80,15 @@ function downloadSelectedQuality() {
 }
 
 function searchSongs() {
+    let url;
     const searchType = document.getElementById('search-type').value;
     const keyword = document.getElementById('search-input').value;
-    let url;
-
     if (!keyword) return
-
     if (searchType === 'keyword') {
         url = `https://api.lolimi.cn/API/qqdg/?word=${encodeURIComponent(keyword)}`;
     } else if (searchType === 'mid') {
         url = `https://api.lolimi.cn/API/qqdg/?mid=${encodeURIComponent(keyword)}&p=4`;
     }
-
     fetch(url)
         .then(response => response.json())
         .then(data => {
@@ -120,23 +107,22 @@ function searchSongs() {
 function displaySongs(songs, keyword) {
     const songList = document.getElementById('song-list');
     songList.innerHTML = '';
-
     if (Array.isArray(songs)) {
         songs.forEach(song => {
             const songItem = document.createElement('div');
             songItem.className = 'song-item';
             songItem.innerHTML = `
-            <img src="${song.cover}" alt="${song.song}">
-            <div class="info">
-                <div>${song.song} - ${song.singer}</div>
-                <div>专辑: ${song.album}</div>
-                <div>MID: ${song.mid} <button onclick="copyMID('${song.mid}', this)">复制</button></div>
-            </div>
-            <div class="actions">
-                <button onclick="playSong('${song.mid}')">播放</button>
-                <button onclick="openDownloadModal('${song.mid}')">下载</button>
-            </div>
-        `;
+                <img src="${song.cover}" alt="${song.song}">
+                <div class="info">
+                    <div>${song.song} - ${song.singer}</div>
+                    <div>专辑: ${song.album}</div>
+                    <div>MID: ${song.mid} <button onclick="copyMID('${song.mid}', this)">复制</button></div>
+                </div>
+                <div class="actions">
+                    <button onclick="playSong('${song.mid}')">播放</button>
+                    <button onclick="openDownloadModal('${song.mid}')">下载</button>
+                </div>
+            `;
             songList.appendChild(songItem);
         });
     } else if (typeof songs === 'object' && songs !== null) {
@@ -144,17 +130,17 @@ function displaySongs(songs, keyword) {
         const songItem = document.createElement('div');
         songItem.className = 'song-item';
         songItem.innerHTML = `
-        <img src="${song.cover}" alt="${song.song}">
-        <div class="info">
-            <div>${song.song} - ${song.singer}</div>
-            <div>专辑: ${song.album}</div>
-            <div>MID: ${keyword} <button onclick="copyMID('${keyword}', this)">复制</button></div>
-        </div>
-        <div class="actions">
-            <button onclick="playSong('${keyword}')">播放</button>
-            <button onclick="openDownloadModal('${keyword}')">下载</button>
-        </div>
-    `;
+            <img src="${song.cover}" alt="${song.song}">
+            <div class="info">
+                <div>${song.song} - ${song.singer}</div>
+                <div>专辑: ${song.album}</div>
+                <div>MID: ${keyword} <button onclick="copyMID('${keyword}', this)">复制</button></div>
+            </div>
+            <div class="actions">
+                <button onclick="playSong('${keyword}')">播放</button>
+                <button onclick="openDownloadModal('${keyword}')">下载</button>
+            </div>
+        `;
         songList.appendChild(songItem);
     } else {
         alert('搜索结果无效，请重试。');
@@ -164,7 +150,6 @@ function displaySongs(songs, keyword) {
 function playSong(mid) {
     const defaultPlayQuality = document.getElementById('default-play-quality').value;
     let quality = parseInt(defaultPlayQuality);
-
     const url = `https://api.lolimi.cn/API/qqdg/?mid=${mid}&q=${quality}`;
     fetch(url)
         .then(response => response.json())
@@ -207,10 +192,7 @@ function downloadSong(mid, quality) {
                     // 将HTTP URL转换为HTTPS URL
                     const secureUrl = data.data.url.replace(/^http:\/\//i, 'https://');
                     const fileName = `${data.data.singer} - ${data.data.song}.${secureUrl.split('.').pop().split('?')[0]}`;
-
-                    getOSSBlobResource(secureUrl).then(res => {
-                        saveFile(res, fileName);
-                    });
+                    getOSSBlobResource(secureUrl).then(res => saveFile(res, fileName));
                 } else {
                     showEmptyUrlModal(); // 显示弹窗提示
                 }
