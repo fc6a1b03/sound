@@ -1,6 +1,7 @@
         let currentSong = null;
-        let selectedQuality = null;
         let selectedMID = null;
+        let selectedQuality = null;
+        const baseUrl = "https://api.lolimi.cn/API/qqdg/";
 
         function handleKeyPress(event) {
             if (event.key === 'Enter') {
@@ -95,9 +96,9 @@
             if (!keyword) return;
 
             if (searchType === 'keyword') {
-                url = `https://api.lolimi.cn/API/qqdg/?word=${encodeURIComponent(keyword)}`;
+                url = `${baseUrl}?word=${encodeURIComponent(keyword)}`;
             } else if (searchType === 'mid') {
-                url = `https://api.lolimi.cn/API/qqdg/?mid=${encodeURIComponent(keyword)}&p=4`;
+                url = `${baseUrl}?mid=${encodeURIComponent(keyword)}&p=4`;
             }
 
             fetch(url)
@@ -161,7 +162,7 @@
             const defaultPlayQuality = document.getElementById('default-play-quality').value;
             let quality = parseInt(defaultPlayQuality);
 
-            const url = `https://api.lolimi.cn/API/qqdg/?mid=${mid}&q=${quality}`;
+            const url = `${baseUrl}?mid=${mid}&q=${quality}`;
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
@@ -193,7 +194,7 @@
         }
 
         function downloadSong(mid, quality) {
-            const url = `https://api.lolimi.cn/API/qqdg/?mid=${mid}&q=${quality}`;
+            const url = `${baseUrl}?mid=${mid}&q=${quality}`;
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
